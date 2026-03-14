@@ -314,6 +314,7 @@ body::before {
   font-family: var(--font-mono);
 }
 
+#provider-select,
 #model-select {
   background: rgba(0, 0, 0, 0.4);
   border: 1px solid var(--glass-border);
@@ -331,13 +332,35 @@ body::before {
   padding-right: 32px;
 }
 
+#provider-select:focus,
 #model-select:focus {
   border-color: var(--accent-primary);
 }
 
+#provider-select option,
 #model-select option {
   background: #1a1a1a;
   color: var(--color-text);
+}
+
+#custom-url-input,
+#model-custom {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--glass-border);
+  border-radius: 6px;
+  padding: var(--space-sm) var(--space-md);
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  outline: none;
+  width: 100%;
+  transition: border-color var(--duration-fast);
+}
+
+#custom-url-input:focus,
+#model-custom:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 8px var(--accent-glow);
 }
 
 /* ── Glass Panel Base ── */

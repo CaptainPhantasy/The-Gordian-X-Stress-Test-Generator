@@ -22,9 +22,96 @@
     chatMinimized: false,
     chatMessages: [],
     settings: {
+      provider: localStorage.getItem('gordianx-provider') || 'openai',
       apiKey: localStorage.getItem('gordianx-api-key') || '',
       model: localStorage.getItem('gordianx-model') || 'gpt-4o',
-      temperature: parseFloat(localStorage.getItem('gordianx-temperature') || '0.9')
+      temperature: parseFloat(localStorage.getItem('gordianx-temperature') || '0.9'),
+      customUrl: localStorage.getItem('gordianx-custom-url') || ''
+    }
+  };
+
+  // ═══════════════════════════════════════════
+  // PROVIDER REGISTRY
+  // ═══════════════════════════════════════════
+  const PROVIDERS = {
+    openai: {
+      name: 'OpenAI',
+      url: 'https://api.openai.com/v1/chat/completions',
+      placeholder: 'sk-...',
+      models: ['gpt-4o', 'gpt-4o-mini', 'gpt-4-turbo', 'o1', 'o1-mini', 'o3-mini'],
+      default: 'gpt-4o'
+    },
+    openrouter: {
+      name: 'OpenRouter',
+      url: 'https://openrouter.ai/api/v1/chat/completions',
+      placeholder: 'sk-or-...',
+      models: [
+        'openai/gpt-4o', 'anthropic/claude-sonnet-4', 'anthropic/claude-opus-4',
+        'google/gemini-2.5-pro', 'google/gemini-2.5-flash',
+        'meta-llama/llama-3.1-405b-instruct', 'mistralai/mistral-large-latest'
+      ],
+      default: 'openai/gpt-4o'
+    },
+    anthropic: {
+      name: 'Anthropic',
+      url: 'https://api.anthropic.com/v1/messages',
+      placeholder: 'sk-ant-...',
+      models: ['claude-opus-4-20250514', 'claude-sonnet-4-20250514', 'claude-haiku-4-5-20251001'],
+      default: 'claude-sonnet-4-20250514',
+      format: 'anthropic'
+    },
+    google: {
+      name: 'Google Gemini',
+      url: 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions',
+      placeholder: 'AIza...',
+      models: ['gemini-2.5-pro', 'gemini-2.5-flash', 'gemini-2.0-flash'],
+      default: 'gemini-2.5-pro'
+    },
+    groq: {
+      name: 'Groq',
+      url: 'https://api.groq.com/openai/v1/chat/completions',
+      placeholder: 'gsk_...',
+      models: ['llama-3.3-70b-versatile', 'mixtral-8x7b-32768', 'gemma2-9b-it'],
+      default: 'llama-3.3-70b-versatile'
+    },
+    together: {
+      name: 'Together AI',
+      url: 'https://api.together.xyz/v1/chat/completions',
+      placeholder: 'tok_...',
+      models: ['meta-llama/Llama-3.3-70B-Instruct-Turbo', 'mistralai/Mixtral-8x22B-Instruct-v0.1'],
+      default: 'meta-llama/Llama-3.3-70B-Instruct-Turbo'
+    },
+    xai: {
+      name: 'xAI (Grok)',
+      url: 'https://api.x.ai/v1/chat/completions',
+      placeholder: 'xai-...',
+      models: ['grok-3', 'grok-3-mini', 'grok-2'],
+      default: 'grok-3'
+    },
+    opencode_zen: {
+      name: 'OpenCode Zen',
+      url: 'https://opencode.ai/zen/v1/chat/completions',
+      placeholder: 'your-opencode-key',
+      models: [
+        'opencode/claude-sonnet-4.6', 'opencode/claude-opus-4.6',
+        'opencode/gpt-5.4', 'opencode/gemini-3.1-pro',
+        'opencode/claude-haiku-4.5', 'opencode/qwen3-coder'
+      ],
+      default: 'opencode/claude-sonnet-4.6'
+    },
+    opencode_go: {
+      name: 'OpenCode Go',
+      url: 'https://opencode.ai/zen/go/v1/chat/completions',
+      placeholder: 'your-opencode-key',
+      models: ['opencode-go/glm-5', 'opencode-go/kimi-k2.5', 'opencode-go/minimax-m2.5'],
+      default: 'opencode-go/glm-5'
+    },
+    custom: {
+      name: 'Custom Endpoint',
+      url: '',
+      placeholder: 'your-api-key',
+      models: [],
+      default: ''
     }
   };
 
@@ -423,31 +510,82 @@ Structure your generated benchmark strictly using the following schema:
   // ═══════════════════════════════════════════
   // OPENAI API
   // ═══════════════════════════════════════════
-  const OpenAIAPI = {
+  const API = {
+    getProvider() {
+      return PROVIDERS[state.settings.provider] || PROVIDERS.openai;
+    },
+
+    getEndpoint() {
+      const p = this.getProvider();
+      if (state.settings.provider === 'custom') {
+        return state.settings.customUrl || '';
+      }
+      return p.url;
+    },
+
     async streamChat(messages, onToken, onDone, onError) {
       if (!state.settings.apiKey) {
-        onError('API key not configured. Open Settings (gear icon) to add your OpenAI API key.');
+        onError('API key not configured. Open Settings (gear icon) to add your key.');
+        return;
+      }
+
+      const provider = this.getProvider();
+      const endpoint = this.getEndpoint();
+      if (!endpoint) {
+        onError('No API endpoint configured. Select a provider or enter a custom URL.');
         return;
       }
 
       try {
-        const response = await fetch('https://api.openai.com/v1/chat/completions', {
-          method: 'POST',
-          headers: {
+        let response;
+
+        if (provider.format === 'anthropic') {
+          // Anthropic Messages API format
+          response = await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-api-key': state.settings.apiKey,
+              'anthropic-version': '2023-06-01',
+              'anthropic-dangerous-direct-browser-access': 'true'
+            },
+            body: JSON.stringify({
+              model: state.settings.model,
+              max_tokens: 4096,
+              system: messages.find(m => m.role === 'system')?.content || '',
+              messages: messages.filter(m => m.role !== 'system'),
+              temperature: state.settings.temperature,
+              stream: true
+            })
+          });
+        } else {
+          // OpenAI-compatible format (OpenAI, OpenRouter, Google, Groq, Together, xAI, custom)
+          const headers = {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${state.settings.apiKey}`
-          },
-          body: JSON.stringify({
-            model: state.settings.model,
-            messages: messages,
-            temperature: state.settings.temperature,
-            stream: true
-          })
-        });
+          };
+          // OpenRouter likes these headers
+          if (state.settings.provider === 'openrouter') {
+            headers['HTTP-Referer'] = location.origin;
+            headers['X-Title'] = 'Gordian-X Adversarial Synthesis Engine';
+          }
+
+          response = await fetch(endpoint, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({
+              model: state.settings.model,
+              messages: messages,
+              temperature: state.settings.temperature,
+              stream: true
+            })
+          });
+        }
 
         if (!response.ok) {
           const err = await response.json().catch(() => ({}));
-          onError(`API Error ${response.status}: ${err.error?.message || response.statusText}`);
+          const msg = err.error?.message || err.message || response.statusText;
+          onError(`API Error ${response.status}: ${msg}`);
           return;
         }
 
@@ -467,13 +605,18 @@ Structure your generated benchmark strictly using the following schema:
             const trimmed = line.trim();
             if (!trimmed || !trimmed.startsWith('data: ')) continue;
             const data = trimmed.slice(6);
-            if (data === '[DONE]') {
-              onDone();
-              return;
-            }
+            if (data === '[DONE]') { onDone(); return; }
             try {
               const parsed = JSON.parse(data);
-              const token = parsed.choices?.[0]?.delta?.content;
+              let token;
+              if (provider.format === 'anthropic') {
+                // Anthropic stream events
+                if (parsed.type === 'content_block_delta') {
+                  token = parsed.delta?.text;
+                }
+              } else {
+                token = parsed.choices?.[0]?.delta?.content;
+              }
               if (token) onToken(token);
             } catch (e) {
               // skip malformed chunks
@@ -608,11 +751,11 @@ Generate a benchmark using the active vectors and parameters above. If no vector
         // Use OpenAI API for real generation
         const messages = [
           { role: 'system', content: SYSTEM_PROMPT },
-          { role: 'user', content: OpenAIAPI.buildContextMessage() + '\n\nGenerate a single, comprehensive benchmark test item utilizing at least three of the Attack Vectors. Scale the complexity to the configured Cognitive Depth and Entropy Level.' }
+          { role: 'user', content: API.buildContextMessage() + '\n\nGenerate a single, comprehensive benchmark test item utilizing at least three of the Attack Vectors. Scale the complexity to the configured Cognitive Depth and Entropy Level.' }
         ];
 
         await new Promise((resolve) => {
-          OpenAIAPI.streamChat(
+          API.streamChat(
             messages,
             (token) => OutputCanvas.appendStream(token),
             () => resolve(),
@@ -702,9 +845,9 @@ ${Array.from({length: Math.min(p.constraintVars, 8)}, (_, i) =>
 
 PRIMARY DIRECTIVE: [CONFIGURE API KEY FOR FULL GENERATION]
 
-This is a template preview. Connect to OpenAI API via the
+This is a template preview. Connect an API via the
 Settings panel (gear icon) for real adversarial benchmark
-synthesis powered by GPT-4o.
+synthesis.
 
 [The Trap]:
 Template mode — connect API for heuristic failure analysis.
@@ -715,7 +858,7 @@ Template mode — connect API for full derivation.
 [Evaluation Rubric]:
 ${rubricTable}
 
-> Configure OpenAI API key for live generation.`;
+> Configure an API key for live generation.`;
     }
   };
 
@@ -801,7 +944,7 @@ ${rubricTable}
       this.addMessage('user', text);
 
       if (!state.settings.apiKey) {
-        this.addMessage('error', 'API key not configured. Open Settings (gear icon, top-right) to add your OpenAI API key.');
+        this.addMessage('error', 'API key not configured. Open Settings (gear icon) to select a provider and add your key.');
         return;
       }
 
@@ -811,7 +954,7 @@ ${rubricTable}
       // Build message history
       const messages = [
         { role: 'system', content: SYSTEM_PROMPT },
-        { role: 'system', content: OpenAIAPI.buildContextMessage() },
+        { role: 'system', content: API.buildContextMessage() },
         { role: 'user', content: text }
       ];
 
@@ -837,7 +980,7 @@ ${rubricTable}
       const responseMsg = this.addMessage('consultant', '');
       const responseText = responseMsg.querySelector('.msg-text');
 
-      await OpenAIAPI.streamChat(
+      await API.streamChat(
         fullMessages,
         (token) => {
           responseText.textContent += token;
@@ -863,23 +1006,42 @@ ${rubricTable}
 
     init() {
       this.panel = document.getElementById('settings-panel');
+      const providerSelect = document.getElementById('provider-select');
       const apiInput = document.getElementById('api-key-input');
       const modelSelect = document.getElementById('model-select');
+      const modelCustom = document.getElementById('model-custom');
+      const customUrlInput = document.getElementById('custom-url-input');
+      const customUrlGroup = document.getElementById('custom-url-group');
       const tempSlider = document.getElementById('temperature-slider');
       const tempValue = document.getElementById('temp-value');
 
       // Load saved settings
+      providerSelect.value = state.settings.provider;
       if (state.settings.apiKey) {
         apiInput.value = state.settings.apiKey;
         this.updateStatus(true);
       }
-      modelSelect.value = state.settings.model;
+      if (state.settings.customUrl) {
+        customUrlInput.value = state.settings.customUrl;
+      }
+      this.populateModels();
       tempSlider.value = state.settings.temperature;
       tempValue.textContent = state.settings.temperature;
+      this.updateCustomUrlVisibility();
 
       // Open/Close
       document.getElementById('settings-btn')?.addEventListener('click', () => this.toggle());
       document.getElementById('settings-close')?.addEventListener('click', () => this.close());
+
+      // Provider
+      providerSelect?.addEventListener('change', () => {
+        state.settings.provider = providerSelect.value;
+        localStorage.setItem('gordianx-provider', state.settings.provider);
+        const p = PROVIDERS[state.settings.provider];
+        apiInput.placeholder = p?.placeholder || 'your-api-key';
+        this.populateModels();
+        this.updateCustomUrlVisibility();
+      });
 
       // API key
       apiInput?.addEventListener('input', () => {
@@ -893,10 +1055,22 @@ ${rubricTable}
         apiInput.type = apiInput.type === 'password' ? 'text' : 'password';
       });
 
-      // Model
+      // Model select
       modelSelect?.addEventListener('change', () => {
         state.settings.model = modelSelect.value;
         localStorage.setItem('gordianx-model', state.settings.model);
+      });
+
+      // Custom model input
+      modelCustom?.addEventListener('input', () => {
+        state.settings.model = modelCustom.value.trim();
+        localStorage.setItem('gordianx-model', state.settings.model);
+      });
+
+      // Custom URL
+      customUrlInput?.addEventListener('input', () => {
+        state.settings.customUrl = customUrlInput.value.trim();
+        localStorage.setItem('gordianx-custom-url', state.settings.customUrl);
       });
 
       // Temperature
@@ -914,6 +1088,44 @@ ${rubricTable}
           this.close();
         }
       });
+    },
+
+    populateModels() {
+      const select = document.getElementById('model-select');
+      const customInput = document.getElementById('model-custom');
+      const p = PROVIDERS[state.settings.provider];
+
+      if (!p || p.models.length === 0) {
+        // Custom provider — show text input, hide select
+        select.style.display = 'none';
+        customInput.style.display = 'block';
+        customInput.value = state.settings.model;
+        return;
+      }
+
+      select.style.display = 'block';
+      customInput.style.display = 'none';
+      select.innerHTML = '';
+      for (const m of p.models) {
+        const opt = document.createElement('option');
+        opt.value = m;
+        opt.textContent = m;
+        select.appendChild(opt);
+      }
+
+      // Restore saved model if it exists in this provider's list, else use default
+      if (p.models.includes(state.settings.model)) {
+        select.value = state.settings.model;
+      } else {
+        select.value = p.default;
+        state.settings.model = p.default;
+        localStorage.setItem('gordianx-model', p.default);
+      }
+    },
+
+    updateCustomUrlVisibility() {
+      const group = document.getElementById('custom-url-group');
+      group.style.display = state.settings.provider === 'custom' ? 'block' : 'none';
     },
 
     toggle() {

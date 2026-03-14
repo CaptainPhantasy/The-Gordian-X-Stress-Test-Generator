@@ -31,7 +31,26 @@
     </div>
     <div class="settings-body">
       <div class="setting-group">
-        <label for="api-key-input">OpenAI API Key</label>
+        <label for="provider-select">Provider</label>
+        <select id="provider-select">
+          <option value="openai">OpenAI</option>
+          <option value="openrouter">OpenRouter</option>
+          <option value="anthropic">Anthropic</option>
+          <option value="google">Google Gemini</option>
+          <option value="groq">Groq</option>
+          <option value="together">Together AI</option>
+          <option value="xai">xAI (Grok)</option>
+          <option value="opencode_zen">OpenCode Zen</option>
+          <option value="opencode_go">OpenCode Go</option>
+          <option value="custom">Custom Endpoint</option>
+        </select>
+      </div>
+      <div class="setting-group" id="custom-url-group" style="display:none">
+        <label for="custom-url-input">Endpoint URL</label>
+        <input type="url" id="custom-url-input" placeholder="https://your-api.com/v1/chat/completions" autocomplete="off">
+      </div>
+      <div class="setting-group">
+        <label for="api-key-input">API Key</label>
         <div class="api-key-row">
           <input type="password" id="api-key-input" placeholder="sk-..." autocomplete="off">
           <button id="api-key-toggle" aria-label="Show/hide key">
@@ -47,13 +66,8 @@
       </div>
       <div class="setting-group">
         <label for="model-select">Model</label>
-        <select id="model-select">
-          <option value="gpt-4o" selected>gpt-4o</option>
-          <option value="gpt-4o-mini">gpt-4o-mini</option>
-          <option value="gpt-4-turbo">gpt-4-turbo</option>
-          <option value="o1">o1</option>
-          <option value="o1-mini">o1-mini</option>
-        </select>
+        <select id="model-select"></select>
+        <input type="text" id="model-custom" placeholder="model-name" style="display:none" autocomplete="off">
       </div>
       <div class="setting-group">
         <label for="temperature-slider">Temperature: <output id="temp-value">0.9</output></label>

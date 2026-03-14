@@ -24,29 +24,29 @@ This isn't a benchmark. This is a benchmark *generator*. It creates multi-dimens
 ## The Arsenal (Or: What's Under The Hood)
 
 ```
-+------------------------------+----------------------------------------------+
-|Feature                       |What It Actually Does                         |
-+------------------------------+----------------------------------------------+
-|Attack Vector Matrix          |Five cognitive weapons for breaking LLM       |
-|                              |reasoning chains. Pick your poison.           |
-+------------------------------+----------------------------------------------+
-|Entropy-Responsive Theming    |UI shifts gold to green to magenta as you     |
-|                              |crank the chaos dial. Because aesthetics.     |
-+------------------------------+----------------------------------------------+
-|OpenAI Streaming Integration  |Real adversarial benchmark generation via     |
-|                              |GPT-4o. Token-by-token. Like watching it      |
-|                              |suffer in real time.                          |
-+------------------------------+----------------------------------------------+
-|Engine Consultant Chat        |Conversational interface with the full        |
-|                              |Gordian-X adversarial persona. It has         |
-|                              |opinions.                                     |
-+------------------------------+----------------------------------------------+
-|Command Palette               |Ctrl+K. Because we're not animals.            |
-+------------------------------+----------------------------------------------+
-|Smoked Glass Aesthetic        |Glassmorphic panels over a psychedelic        |
-|                              |backdrop that Bowser designed at 2:47 AM.     |
-|                              |Probably.                                     |
-+------------------------------+----------------------------------------------+
+┌──────────────────────────────┬──────────────────────────────────────────────┐
+│Feature                       │What It Actually Does                         │
+├──────────────────────────────┼──────────────────────────────────────────────┤
+│Attack Vector Matrix          │Five cognitive weapons for breaking LLM       │
+│                              │reasoning chains. Pick your poison.           │
+├──────────────────────────────┼──────────────────────────────────────────────┤
+│Entropy-Responsive Theming    │UI shifts gold to green to magenta as you     │
+│                              │crank the chaos dial. Because aesthetics.     │
+├──────────────────────────────┼──────────────────────────────────────────────┤
+│Multi-Provider Streaming      │Bring your own API key. Works with any major  │
+│                              │provider. Token-by-token. Like watching it    │
+│                              │suffer in real time.                          │
+├──────────────────────────────┼──────────────────────────────────────────────┤
+│Engine Consultant Chat        │Conversational interface with the full        │
+│                              │Gordian-X adversarial persona. It has         │
+│                              │opinions.                                     │
+├──────────────────────────────┼──────────────────────────────────────────────┤
+│Command Palette               │Ctrl+K. Because we're not animals.            │
+├──────────────────────────────┼──────────────────────────────────────────────┤
+│Smoked Glass Aesthetic        │Glassmorphic panels over a psychedelic        │
+│                              │backdrop that Bowser designed at 2:47 AM.     │
+│                              │Probably.                                     │
+└──────────────────────────────┴──────────────────────────────────────────────┘
 ```
 
 ### The Five Attack Vectors
@@ -63,7 +63,24 @@ Open `index.html` in any browser. That's it. No build tools. No `npm install` th
 
 Because if you need a build system to open an HTML file, you've gone too far.
 
-For real adversarial benchmark generation, open Settings (gear icon) and drop in an OpenAI API key. The engine will use GPT-4o to synthesize benchmarks that would make your favorite AI company's evaluation team very uncomfortable.
+For real adversarial benchmark generation, open Settings (gear icon), pick your provider, and drop in an API key. The engine supports ten providers out of the box:
+
+```
+┌───────────────┬──────────────────────────────────────────────────┐
+│Provider       │What You Get                                      │
+├───────────────┼──────────────────────────────────────────────────┤
+│OpenAI         │The usual suspects. GPT-4o and friends.           │
+│OpenRouter     │One key, every model. The Switzerland of APIs.    │
+│Anthropic      │Claude models direct. For the discerning builder. │
+│Google Gemini  │Gemini 2.5 Pro/Flash. Google's best foot forward. │
+│Groq           │Fast inference. Really fast. Scary fast.          │
+│Together AI    │Open-source models with real horsepower.          │
+│xAI            │Grok. Because why not.                            │
+│OpenCode Zen   │Curated models tested for coding agents.          │
+│OpenCode Go    │Budget-friendly models that still pack a punch.   │
+│Custom         │Your URL, your key, your problem. We support it.  │
+└───────────────┴──────────────────────────────────────────────────┘
+```
 
 Without an API key, you get template previews. Still pretty. Just not weaponized.
 
@@ -80,7 +97,7 @@ That's it. Four files. Built in a garage, not a boardroom. Powered by spite and 
 
 ## Why We Built This (Or: The Manifesto Part)
 
-Every major AI lab publishes benchmarks that conveniently make their models look good. MMLU, HumanEval, whatever the latest acronym soup is -- they're all designed around patterns that modern LLMs have already memorized. It's like testing a student with the answer key taped to the back of the exam.
+Every major AI lab publishes benchmarks that conveniently make their models look good. Mega Memorization Leaderboard Ultimate, HumanishEval, HellaFudge, whatever the latest acronym soup is -- they're all designed around patterns that modern LLMs have already memorized. It's like testing a student with the answer key taped to the back of the exam.
 
 Gordian-X generates the kind of problems that can't be memorized. Problems that require actual reasoning, actual constraint tracking, actual theory of mind. The kind of problems that separate "pattern matching with extra steps" from genuine intelligence.
 
@@ -97,17 +114,18 @@ Is it mean? Maybe. But Bella didn't become Senior Project Manager by being nice.
 ---
 
 ```
-+----------------------------------------------+
-|GORDIAN-X README METADATA                     |
-+----------------------------------------------+
-|                                              |
-|  Category:         Cognitive Warfare         |
-|  Coffee Level:     Dangerous                 |
-|  Cat Supervision:  Bella Approved            |
-|  Bowser Status:    Monitoring Network Traffic |
-|  Corporate Damage: MAXIMUM                   |
-|  Build System:     None. You're Welcome.     |
-|  Dependencies:     Zero. Because Spite.      |
-|                                              |
-+----------------------------------------------+
+┌──────────────────────────────────────────────────┐
+│GORDIAN-X README METADATA                         │
+├──────────────────────────────────────────────────┤
+│                                                  │
+│  Category:         Cognitive Warfare             │
+│  Coffee Level:     Dangerous                     │
+│  Cat Supervision:  Bella Approved                │
+│  Bowser Status:    Monitoring Network Traffic     │
+│  Corporate Damage: MAXIMUM                       │
+│  Build System:     None. You're Welcome.         │
+│  Dependencies:     Zero. Because Spite.          │
+│  API Providers:    Ten. Because Agnostic.        │
+│                                                  │
+└──────────────────────────────────────────────────┘
 ```
