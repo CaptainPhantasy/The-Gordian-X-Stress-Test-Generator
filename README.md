@@ -121,7 +121,7 @@ Is it mean? Maybe. But Bella didn't become Senior Project Manager by being nice.
 │  Category:         Cognitive Warfare            │
 │  Coffee Level:     Dangerous                    │
 │  Cat Supervision:  Bella Approved               │
-│  Bowser Status:    Monitoring Network Traffic    │
+│  Bowser Status:    Monitoring Network Traffic   │
 │  Corporate Damage: MAXIMUM                      │
 │  Build System:     None. You're Welcome.        │
 │  Dependencies:     Zero. Because Spite.         │
