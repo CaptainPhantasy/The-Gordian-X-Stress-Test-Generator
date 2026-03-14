@@ -114,18 +114,21 @@ Is it mean? Maybe. But Bella didn't become Senior Project Manager by being nice.
 ---
 
 ```
-┌──────────────────────────────────────────────────┐
-│GORDIAN-X README METADATA                         │
-├──────────────────────────────────────────────────┤
-│                                                  │
-│  Category:         Cognitive Warfare             │
-│  Coffee Level:     Dangerous                     │
-│  Cat Supervision:  Bella Approved                │
-│  Bowser Status:    Monitoring Network Traffic     │
-│  Corporate Damage: MAXIMUM                       │
-│  Build System:     None. You're Welcome.         │
-│  Dependencies:     Zero. Because Spite.          │
-│  API Providers:    Ten. Because Agnostic.        │
-│                                                  │
-└──────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────┐
+│ GORDIAN-X README METADATA                       │
+├─────────────────────────────────────────────────┤
+│                                                 │
+│  Category:         Cognitive Warfare            │
+│  Coffee Level:     Dangerous                    │
+│  Cat Supervision:  Bella Approved               │
+│  Bowser Status:    Monitoring Network Traffic    │
+│  Corporate Damage: MAXIMUM                      │
+│  Build System:     None. You're Welcome.        │
+│  Dependencies:     Zero. Because Spite.         │
+│  API Providers:    Ten. Because Agnostic.       │
+│                                                 │
+└─────────────────────────────────────────────────┘
+```
+
+by Legacy AI / Floyd's Labs (c) 2026 - https://www.FloydsLabs.com
 ```
