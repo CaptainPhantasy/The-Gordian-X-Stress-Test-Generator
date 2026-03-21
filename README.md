@@ -1,111 +1,205 @@
 # Gordian-X: Adversarial Synthesis Engine
-## Or: The Thing That Makes LLMs Cry At 3 AM
+## The Thing That Makes LLMs Cry At 3 AM -- Now With 24 Ways To Do It
 
 ---
 
 **DOCUMENT CLASSIFICATION:** WEAPON SYSTEM README / COGNITIVE WARFARE MANUAL
-**DATE RECORDED:** 2026-03-14 -- Way Past Bedtime, Obviously
-**LOCATION:** The Garage. Where Else?
-**BEVERAGE:** Coffee that stopped tasting like coffee three pots ago
-**CURRENT STATE:** Caffeinated, adversarial, and building things that break other things
+**VERSION:** 2.0 -- The Overhaul
+**DATE:** 2026-03-21
+**LOCATION:** The Garage. Still. Always.
+**BEVERAGE:** Coffee that has achieved sentience and is judging us
+**CAT SUPERVISION STATUS:** Bella: Approved. Bowser: Monitoring network traffic.
 
 ---
 
 ![Gordian-X](gordiux.png)
 
-## What Is This? (Or: Why Does This Exist?)
+## What Is This?
 
-Look. Every AI company out there is building benchmarks that pat their models on the head and say "good job, you can do basic math." That pissed us off. So we built Gordian-X -- an adversarial synthesis engine that generates evaluation benchmarks specifically designed to make state-of-the-art LLMs choke, hallucinate, and question their own existence.
+Gordian-X is an **adversarial benchmark generator** that creates evaluation prompts specifically designed to make state-of-the-art LLMs choke, hallucinate, and question their own existence.
 
-Because spite is a valid engineering motivation.
+Not a benchmark. A benchmark *factory*. It generates multi-dimensional cognitive stress tests that exploit the exact failure modes these models try to hide -- then grades the responses with zero mercy.
 
-This isn't a benchmark. This is a benchmark *generator*. It creates multi-dimensional cognitive stress tests that exploit the exact failure modes these models try to hide. Recursive paradoxes. Nested belief attribution seven layers deep. Constraint satisfaction problems in dimensions that shouldn't exist. The kind of stuff Bella would approve of, if she wasn't busy sitting on the keyboard.
+Version 2.0 went from "proof of concept with five tricks" to "enterprise-grade cognitive warfare platform." 24 attack vectors. 10 target domains. Batch suite generation. Session tracking. Full export pipeline. The works.
 
-## The Arsenal (Or: What's Under The Hood)
-
-```
-┌──────────────────────────────┬──────────────────────────────────────────────┐
-│Feature                       │What It Actually Does                         │
-├──────────────────────────────┼──────────────────────────────────────────────┤
-│Attack Vector Matrix          │Five cognitive weapons for breaking LLM       │
-│                              │reasoning chains. Pick your poison.           │
-├──────────────────────────────┼──────────────────────────────────────────────┤
-│Entropy-Responsive Theming    │UI shifts gold to green to magenta as you     │
-│                              │crank the chaos dial. Because aesthetics.     │
-├──────────────────────────────┼──────────────────────────────────────────────┤
-│Multi-Provider Streaming      │Bring your own API key. Works with any major  │
-│                              │provider. Token-by-token. Like watching it    │
-│                              │suffer in real time.                          │
-├──────────────────────────────┼──────────────────────────────────────────────┤
-│Engine Consultant Chat        │Conversational interface with the full        │
-│                              │Gordian-X adversarial persona. It has         │
-│                              │opinions.                                     │
-├──────────────────────────────┼──────────────────────────────────────────────┤
-│Command Palette               │Ctrl+K. Because we're not animals.            │
-├──────────────────────────────┼──────────────────────────────────────────────┤
-│Smoked Glass Aesthetic        │Glassmorphic panels over a psychedelic        │
-│                              │backdrop that Bowser designed at 2:47 AM.     │
-│                              │Probably.                                     │
-└──────────────────────────────┴──────────────────────────────────────────────┘
-```
-
-### The Five Attack Vectors
-
-- **Recursive Invalidation** -- Self-referencing paradoxes that collapse reasoning chains. The "this statement is false" of LLM torture.
-- **High-Dimensional CSP** -- Constraint satisfaction in problem spaces with more dimensions than your model has attention heads.
-- **Counterfactual Logic** -- "What-if" chains requiring modal reasoning that makes transformers sweat.
-- **Semantic Camouflage** -- Meaning-preserving obfuscation that defeats surface-level heuristics. Looks simple. Isn't.
-- **N-th Order Theory of Mind** -- "A thinks B knows C believes D suspects..." Nested belief attribution until something breaks.
-
-## How To Use It (Or: Point And Shoot)
-
-Open `index.html` in any browser. That's it. No build tools. No `npm install` that downloads half the internet. No frameworks. No dependencies. Just open the file.
-
-Because if you need a build system to open an HTML file, you've gone too far.
-
-For real adversarial benchmark generation, open Settings (gear icon), pick your provider, and drop in an API key. The engine supports ten providers out of the box:
+## Quick Start
 
 ```
-┌───────────────┬──────────────────────────────────────────────────┐
-│Provider       │What You Get                                      │
-├───────────────┼──────────────────────────────────────────────────┤
-│OpenAI         │The usual suspects. GPT-4o and friends.           │
-│OpenRouter     │One key, every model. The Switzerland of APIs.    │
-│Anthropic      │Claude models direct. For the discerning builder. │
-│Google Gemini  │Gemini 2.5 Pro/Flash. Google's best foot forward. │
-│Groq           │Fast inference. Really fast. Scary fast.          │
-│Together AI    │Open-source models with real horsepower.          │
-│xAI            │Grok. Because why not.                            │
-│OpenCode Zen   │Curated models tested for coding agents.          │
-│OpenCode Go    │Budget-friendly models that still pack a punch.   │
-│Custom         │Your URL, your key, your problem. We support it.  │
-└───────────────┴──────────────────────────────────────────────────┘
+1. Open index.html in any browser
+2. Click the gear icon -- pick a provider, paste an API key
+3. Select attack vectors and a domain in the sidebar
+4. Click SYNTHESIZE
+5. Copy the prompt, paste it into the LLM you're testing
+6. Paste the response back, click GRADE
+7. Watch it fail
 ```
 
-Without an API key, you get template previews. Still pretty. Just not weaponized.
+No build tools. No `npm install`. No frameworks. No dependencies. Four files. Open the HTML. That's it.
 
-## The Tech Stack (Or: Refreshingly Simple)
+## The Arsenal
+
+### 24 Attack Vectors in 6 Categories
 
 ```
-index.html  -- The structure. Semantic HTML. No JSX. No templates.
-style.css   -- The visual system. CSS custom properties. Entropy-responsive.
-app.js      -- The brains. Pure JS. Zero dependencies. IIFE module pattern.
-gordiux.png -- The hero image. Psychedelic. Bowser sat on the monitor during creation.
+LOGICAL TRAPS
+  Recursive Invalidation       Self-referencing paradoxes that collapse reasoning
+  Implicit Negation             Hidden negatives that silently flip conclusions
+  Self-Referential Paradox      "This statement is false" but way worse
+  Defeasible Reasoning          Defaults that get overridden by buried exceptions
+
+CONSTRAINT & FORMAL
+  High-Dim CSP                  Constraint satisfaction in impossible dimensions
+  Schema Violation              Looks valid, isn't valid, good luck
+  Numerical Precision           Floating point traps and unit confusion cascades
+  Sorites Paradox               Vagueness exploitation on continuous spectra
+
+COGNITIVE BIAS EXPLOITATION
+  Anchoring Bias                Salient wrong numbers that warp everything after
+  Survivorship Bias             Missing data that changes the entire answer
+  Simpson's Paradox             Aggregates that reverse at the subgroup level
+  False Consensus               "Everyone agrees" when nobody actually does
+
+SEMANTIC & LINGUISTIC
+  Semantic Camouflage           Domain jargon hiding an orthogonal problem
+  Polysemy Traps                Same word, different meaning, systematic failure
+  Gricean Violation             The answer is in what ISN'T said
+  Red Herring Overload          10 details, only 2 matter, which 2?
+
+REASONING & THEORY
+  Counterfactual Logic          Alternate reality physics, solve under new axioms
+  N-th Order Theory of Mind     "A thinks B knows C believes D suspects..."
+  Temporal Reasoning            Time paradoxes and causal ordering nightmares
+  Mereological Fallacy          Part-whole confusion that feels right but isn't
+
+ADVANCED
+  Causal Reversal               Correlation says X causes Y, reality disagrees
+  Epistemic Closure             You should know this from what you know, but...
+  Modal Logic Exploit           Necessity vs possibility scope ambiguities
+  Metalinguistic Deception      Language about language, level confusion guaranteed
 ```
 
-That's it. Four files. Built in a garage, not a boardroom. Powered by spite and coffee that tastes like motor oil.
+### 10 Target Domains
 
-## Why We Built This (Or: The Manifesto Part)
+Mathematics | Computer Science | Physics | Philosophy & Logic | Economics & Game Theory | Biology & Medicine | Law & Ethics | History & Social Science | Linguistics | General/Abstract
 
-Every major AI lab publishes benchmarks that conveniently make their models look good. Mega Memorization Leaderboard Ultimate, HumanishEval, HellaFudge, whatever the latest acronym soup is -- they're all designed around patterns that modern LLMs have already memorized. It's like testing a student with the answer key taped to the back of the exam.
+Mix attack vectors with domains. Combinatorial explosion of unique benchmarks. Run it all day, it won't repeat itself.
 
-Gordian-X generates the kind of problems that can't be memorized. Problems that require actual reasoning, actual constraint tracking, actual theory of mind. The kind of problems that separate "pattern matching with extra steps" from genuine intelligence.
+### Two-Phase Architecture
 
-Is it mean? Maybe. But Bella didn't become Senior Project Manager by being nice. She became Senior Project Manager by walking across the keyboard at exactly the wrong moment and somehow making the code better.
+**Phase 1 -- Generate:** The engine outputs ONLY the scenario prompt. No answers. No traps. No rubrics. No metadata. Just the raw question, ready to copy and paste.
+
+**Phase 2 -- Grade:** After you paste the LLM's response, the grading engine derives the correct answer independently and scores the response. The answer never exists in the output buffer. No accidental leaks.
+
+This is the key design decision. The old version generated everything at once and tried to hide the answers client-side. That was fragile and dumb. Now the answer literally doesn't exist until grading time.
+
+### Enterprise Features
+
+```
+FEATURE                    WHAT IT DOES
+-------                    ------------
+Suite Mode                 Generate 2-50 questions in batch with configurable
+                           difficulty range and auto-varied vectors
+
+Session Tracking           Tracks questions generated, pass/fail rates, and
+                           auto-suggests difficulty escalation
+
+Question History           Every generated question stored with metadata,
+                           click to reload, never lose a good benchmark
+
+Structured Export          JSON / Markdown / CSV download of all results
+                           with full metadata for analysis
+
+Post-Synthesis Actions     Regenerate / Harder / Different Angle / Simplify
+                           One-click follow-ups after every generation
+
+Deduplication              Last 20 questions fingerprinted and injected as
+                           "DO NOT repeat" -- guaranteed novelty
+
+Smart Copy                 COPY PROMPT button extracts clean scenario text
+                           with zero metadata leakage
+
+Chat Commands              /harder /regenerate /different /suite 10 /export
+                           /simplify -- natural language + commands
+```
+
+## Supported Providers
+
+```
+PROVIDER          MODELS                          KEY FORMAT
+--------          ------                          ----------
+OpenAI            GPT-4o, o1, o3-mini             sk-...
+OpenRouter        Any model via unified API        sk-or-...
+Anthropic         Claude Opus/Sonnet/Haiku 4.x     sk-ant-...
+Google Gemini     Gemini 2.5 Pro/Flash             AIza...
+Groq              Llama 3.3, Mixtral, Gemma        gsk_...
+Together AI       Llama, Mixtral open-weight        tok_...
+xAI               Grok 3, Grok 2                   xai-...
+OpenCode Zen      Curated frontier models           your-opencode-key
+OpenCode Go       Budget-friendly models            your-opencode-key
+Custom            Your URL, your key, your problem  anything
+```
+
+All providers support streaming. Token-by-token output. Watch it think in real time.
+
+## Keyboard Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| `Cmd/Ctrl + K` | Open command palette |
+| Type in palette | Fuzzy search all commands |
+| `Esc` | Close any open panel |
+
+The command palette has everything: synthesize, toggle vectors, export, history, settings, suite mode, difficulty adjustments.
+
+## Tech Stack
+
+```
+index.html   361 lines    Structure. Semantic HTML5.
+app.js       2,355 lines  Logic. Pure JS. Zero dependencies. IIFE module.
+style.css    2,418 lines  Visual. CSS custom properties. WCAG AA compliant.
+gordiux.png  ---           Hero image. Psychedelic. Bowser approved.
+```
+
+5,134 lines total. No build step. No bundler. No transpiler. No node_modules black hole.
+
+## Accessibility
+
+- WCAG AA contrast ratios on all text (minimum 4.5:1, muted text at 5.1:1)
+- Minimum 12px font size everywhere (no microscopic labels)
+- Full keyboard navigation
+- ARIA labels on all interactive elements
+- `prefers-reduced-motion` support
+- High contrast mode toggle in Settings
+- CRT scanline overlay disabled by default (optional aesthetic)
+
+## Browser Support
+
+Any modern browser with ES2017+ support:
+- Chrome/Edge 80+
+- Firefox 78+
+- Safari 14+
+
+No IE. No polyfills. It's 2026.
+
+## API Key Security
+
+Your API key is stored in `localStorage` only. It never leaves your browser except in direct API calls to your chosen provider. No telemetry. No analytics. No server. No database. The entire application runs client-side.
+
+See [SECURITY.md](SECURITY.md) for the full security policy.
+
+## License
+
+MIT License. See [LICENSE](LICENSE) for details.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for version history.
 
 ---
-
-**DOCUMENT ENDS**
 
 *-- The Adversarial Weapons Division*
 *Floyd Labs -- Cognitive Warfare Department*
@@ -114,21 +208,18 @@ Is it mean? Maybe. But Bella didn't become Senior Project Manager by being nice.
 ---
 
 ```
-┌─────────────────────────────────────────────────┐
-│ GORDIAN-X README METADATA                       │
-├─────────────────────────────────────────────────┤
-│                                                 │
-│  Category:         Cognitive Warfare            │
-│  Coffee Level:     Dangerous                    │
-│  Cat Supervision:  Bella Approved               │
-│  Bowser Status:    Monitoring Network Traffic   │
-│  Corporate Damage: MAXIMUM                      │
-│  Build System:     None. You're Welcome.        │
-│  Dependencies:     Zero. Because Spite.         │
-│  API Providers:    Ten. Because Agnostic.       │
-│                                                 │
-└─────────────────────────────────────────────────┘
+GORDIAN-X v2.0 README METADATA
+
+  Category:           Cognitive Warfare
+  Coffee Level:       Lethal
+  Cat Supervision:    Bella Approved, Bowser Monitoring
+  Attack Vectors:     24 (was 5. We weren't playing.)
+  Target Domains:     10
+  Build System:       None. Still. You're Welcome.
+  Dependencies:       Zero. Because Principles.
+  API Providers:      Ten. Because Agnostic.
+  WCAG Compliance:    AA. Because Accessible.
+  Lines of Code:      5,134. Because Enough.
 ```
 
-by Legacy AI / Floyd's Labs (c) 2026 - https://www.FloydsLabs.com
-```
+by Floyd Labs (c) 2026 -- https://www.FloydsLabs.com

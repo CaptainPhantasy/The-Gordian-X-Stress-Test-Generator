@@ -4,16 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gordian-X | Adversarial Synthesis Engine</title>
-  <meta name="description" content="Ultra-high-complexity evaluation benchmark generator for stress-testing Large Language Models">
+  <meta name="description" content="Enterprise adversarial benchmark generator for stress-testing Large Language Models">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-  <!-- Scanline CRT overlay -->
-  <div id="scanline-overlay" aria-hidden="true"></div>
 
   <!-- Settings gear button -->
   <button id="settings-btn" aria-label="Open settings" title="Settings">
@@ -73,185 +70,249 @@
         <label for="temperature-slider">Temperature: <output id="temp-value">0.9</output></label>
         <input type="range" id="temperature-slider" min="0" max="2" step="0.1" value="0.9">
       </div>
+      <hr class="settings-divider">
+      <div class="setting-group">
+        <label>Visual</label>
+        <label class="toggle-row"><input type="checkbox" id="scanline-toggle"><span>CRT Scanlines</span></label>
+        <label class="toggle-row"><input type="checkbox" id="high-contrast-toggle"><span>High Contrast</span></label>
+      </div>
     </div>
   </aside>
 
-  <!-- Hero section -->
+  <!-- Hero section (kept) -->
   <header id="hero-section">
-    <div class="hero-gradient" aria-hidden="true"></div>
+    <img src="gordiux.png" alt="Gordian-X: Adversarial Benchmark Generator by Floyd Labs" class="hero-image">
     <div class="hero-status">
       <span class="pulse-dot"></span>
       <span>ADVERSARIAL_SYNTHESIS_ENGINE :: ACTIVE</span>
+      <kbd class="kbd-hint" title="Open command palette">&#8984;K</kbd>
     </div>
   </header>
 
-  <!-- Main engine interface -->
-  <main id="engine-section">
+  <!-- Onboarding overlay (first-run) -->
+  <div id="onboarding-overlay" class="overlay hidden" role="dialog" aria-label="Getting started">
+    <div class="onboarding-content glass-panel">
+      <h2>Welcome to Gordian-X</h2>
+      <p>Enterprise adversarial benchmark generator for stress-testing LLMs.</p>
+      <ol class="onboarding-steps">
+        <li>Configure your <strong>API provider</strong> in Settings (gear icon)</li>
+        <li>Select <strong>attack vectors</strong> and <strong>domain</strong> in the sidebar</li>
+        <li>Adjust <strong>difficulty parameters</strong></li>
+        <li>Click <strong>SYNTHESIZE</strong> to generate a benchmark prompt</li>
+        <li><strong>Copy the prompt</strong> and test your target LLM</li>
+        <li>Paste the response back and click <strong>GRADE</strong></li>
+      </ol>
+      <button id="onboarding-dismiss" class="action-btn grade-action">GET STARTED</button>
+    </div>
+  </div>
 
-    <!-- Attack Vector Matrix -->
-    <section class="glass-panel" id="attack-vectors">
-      <div class="panel-header">
-        <h2>Attack Vector Matrix</h2>
-        <span class="panel-tag">COGNITIVE WEAPONS</span>
-      </div>
-      <div class="vector-grid">
-        <button class="vector-btn" data-vector="recursiveInvalidation" aria-pressed="false">
-          <span class="vector-icon">&#x21BA;</span>
-          <span class="vector-label">Recursive Invalidation</span>
-          <span class="vector-desc">Self-referencing paradoxes that collapse reasoning chains</span>
-        </button>
-        <button class="vector-btn" data-vector="highDimCSP" aria-pressed="false">
-          <span class="vector-icon">&#x2B21;</span>
-          <span class="vector-label">High-Dim CSP</span>
-          <span class="vector-desc">Constraint satisfaction in n-dimensional problem spaces</span>
-        </button>
-        <button class="vector-btn" data-vector="counterfactualLogic" aria-pressed="false">
-          <span class="vector-icon">&#x2234;</span>
-          <span class="vector-label">Counterfactual Logic</span>
-          <span class="vector-desc">"What-if" chains requiring modal reasoning</span>
-        </button>
-        <button class="vector-btn" data-vector="semanticCamouflage" aria-pressed="false">
-          <span class="vector-icon">&#x29C9;</span>
-          <span class="vector-label">Semantic Camouflage</span>
-          <span class="vector-desc">Meaning-preserving obfuscation defeating surface heuristics</span>
-        </button>
-        <button class="vector-btn" data-vector="nthOrderToM" aria-pressed="false">
-          <span class="vector-icon">&#x2697;</span>
-          <span class="vector-label">N-th Order ToM</span>
-          <span class="vector-desc">Nested belief attribution: "A thinks B knows C believes..."</span>
-        </button>
-      </div>
-    </section>
+  <!-- Main layout: sidebar + content -->
+  <main id="app-layout">
+    <!-- Config sidebar -->
+    <aside id="config-sidebar">
+      <button id="sidebar-toggle" aria-label="Toggle sidebar" title="Collapse sidebar">&#9664;</button>
 
-    <!-- Synthesis Parameters -->
-    <section class="glass-panel" id="synthesis-params">
-      <div class="panel-header">
-        <h2>Synthesis Parameters</h2>
-        <span class="panel-tag">CALIBRATION</span>
-      </div>
-      <div class="params-grid">
-        <div class="param-group">
-          <label for="depth-slider">Cognitive Depth</label>
-          <div class="slider-row">
-            <input type="range" id="depth-slider" min="1" max="10" value="5" step="1">
-            <output for="depth-slider" id="depth-value">5</output>
+      <section class="sidebar-section" id="vectors-section">
+        <div class="sidebar-header">
+          <h2>Attack Vectors</h2>
+          <span class="badge" id="vector-count">0</span>
+        </div>
+        <div id="vector-container" role="group" aria-label="Attack vector selection"></div>
+      </section>
+
+      <section class="sidebar-section" id="domain-section">
+        <div class="sidebar-header"><h2>Domain</h2></div>
+        <div id="domain-container" role="group" aria-label="Domain selection"></div>
+      </section>
+
+      <section class="sidebar-section" id="params-section">
+        <div class="sidebar-header"><h2>Parameters</h2></div>
+        <div id="param-bar">
+          <div class="param-compact">
+            <label for="depth-slider">Depth <output id="depth-value">5</output></label>
+            <input type="range" id="depth-slider" min="1" max="10" value="5">
+          </div>
+          <div class="param-compact">
+            <label for="entity-slider">Entities <output id="entity-value">3</output></label>
+            <input type="range" id="entity-slider" min="1" max="20" value="3">
+          </div>
+          <div class="param-compact">
+            <label for="constraint-slider">Constraints <output id="constraint-value">4</output></label>
+            <input type="range" id="constraint-slider" min="1" max="50" value="4">
+          </div>
+          <div class="param-compact">
+            <label for="entropy-slider">Entropy <output id="entropy-value">5</output></label>
+            <input type="range" id="entropy-slider" min="1" max="10" value="5">
           </div>
         </div>
-        <div class="param-group">
-          <label for="entity-slider">Entity Count</label>
-          <div class="slider-row">
-            <input type="range" id="entity-slider" min="1" max="20" value="3" step="1">
-            <output for="entity-slider" id="entity-value">3</output>
+      </section>
+    </aside>
+
+    <!-- Main content area -->
+    <div id="main-content">
+      <!-- Action bar -->
+      <div id="action-bar">
+        <button id="synthesize-btn"><span class="btn-text">SYNTHESIZE</span></button>
+        <div class="action-group">
+          <button id="suite-btn" class="toolbar-btn" title="Generate benchmark suite">SUITE</button>
+          <button id="history-btn" class="toolbar-btn" title="Question history">HISTORY</button>
+          <button id="export-btn" class="toolbar-btn" title="Export results">EXPORT</button>
+        </div>
+        <div id="session-info">
+          <span id="session-count">Session: 0 questions</span>
+          <span id="session-pass-rate"></span>
+        </div>
+      </div>
+
+      <!-- Output canvas (primary - gets majority of space) -->
+      <section id="output-canvas" class="glass-panel">
+        <div class="panel-header">
+          <h2>Output Canvas</h2>
+          <div class="canvas-actions">
+            <button id="copy-prompt-btn" class="action-btn primary-copy" aria-label="Copy clean prompt">COPY PROMPT</button>
+            <button id="copy-full-btn" class="action-btn" aria-label="Copy full output">COPY ALL</button>
+            <button id="clear-btn" class="action-btn" aria-label="Clear output">CLEAR</button>
           </div>
         </div>
-        <div class="param-group">
-          <label for="constraint-slider">Constraint Variables</label>
-          <div class="slider-row">
-            <input type="range" id="constraint-slider" min="1" max="50" value="4" step="1">
-            <output for="constraint-slider" id="constraint-value">4</output>
-          </div>
-        </div>
-        <div class="param-group entropy-group">
-          <label for="entropy-slider">Entropy Level</label>
-          <div class="slider-row">
-            <input type="range" id="entropy-slider" min="1" max="10" value="5" step="1">
-            <output for="entropy-slider" id="entropy-value">5</output>
-          </div>
-        </div>
-      </div>
-      <!-- Entropy Meter -->
-      <div id="entropy-meter">
-        <svg viewBox="0 0 120 120" class="meter-svg">
-          <circle cx="60" cy="60" r="52" class="meter-track"/>
-          <circle cx="60" cy="60" r="52" class="meter-fill" stroke-dasharray="327" stroke-dashoffset="163"/>
-          <text x="60" y="55" class="meter-value">5</text>
-          <text x="60" y="72" class="meter-label">ENTROPY</text>
-        </svg>
-      </div>
-    </section>
+        <div class="terminal">
+          <div class="terminal-body" id="terminal-output">
+            <pre class="output-text" id="output-text">Gordian-X Adversarial Synthesis Engine v2026.4
+&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;
 
-    <!-- Grounding Ammunition Feed -->
-    <section class="glass-panel" id="grounding-feed">
-      <div class="panel-header">
-        <h2>Grounding Feed</h2>
-        <span class="panel-tag feed-status">
-          <span class="pulse-dot small"></span> LIVE
-        </span>
-      </div>
-      <div class="feed-container" role="log" aria-live="polite" aria-label="Data source feed">
-        <div class="feed-empty">Awaiting synthesis trigger...</div>
-      </div>
-    </section>
-
-    <!-- Output Canvas -->
-    <section class="glass-panel" id="output-canvas">
-      <div class="panel-header">
-        <h2>Output Canvas</h2>
-        <div class="canvas-actions">
-          <button id="copy-btn" class="action-btn" aria-label="Copy to clipboard">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
-              <rect x="4" y="4" width="9" height="9" rx="1"/>
-              <path d="M10 4V2.5A1.5 1.5 0 0 0 8.5 1h-6A1.5 1.5 0 0 0 1 2.5v6A1.5 1.5 0 0 0 2.5 10H4"/>
-            </svg>
-            <span>COPY</span>
-          </button>
-          <button id="clear-btn" class="action-btn" aria-label="Clear output">CLEAR</button>
-        </div>
-      </div>
-      <div class="terminal">
-        <div class="terminal-bar">
-          <span class="dot red"></span>
-          <span class="dot yellow"></span>
-          <span class="dot green"></span>
-          <span class="terminal-title">GORDIAN_OUTPUT_v4.2.6</span>
-        </div>
-        <div class="terminal-body" id="terminal-output">
-          <pre class="output-text">Gordian-X Adversarial Synthesis Engine v2026.4
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Select attack vectors and parameters, then
+Select attack vectors and a domain, then
 press SYNTHESIZE to generate a benchmark.
 
-Or use the chat interface to describe your
-benchmark requirements in natural language.
+Configure your API key in Settings first.
 
 &gt; Awaiting directives...</pre>
+          </div>
+          <div class="skeleton-overlay" id="skeleton-overlay" aria-hidden="true">
+            <div class="skeleton-line w80"></div>
+            <div class="skeleton-line w60"></div>
+            <div class="skeleton-line w90"></div>
+            <div class="skeleton-line w70"></div>
+            <div class="skeleton-line w85"></div>
+          </div>
         </div>
-        <!-- Skeleton loading overlay -->
-        <div class="skeleton-overlay" id="skeleton-overlay" aria-hidden="true">
-          <div class="skeleton-line w80"></div>
-          <div class="skeleton-line w60"></div>
-          <div class="skeleton-line w90"></div>
-          <div class="skeleton-line w70"></div>
-          <div class="skeleton-line w85"></div>
-          <div class="skeleton-line w50"></div>
-          <div class="skeleton-line w75"></div>
-          <div class="skeleton-line w65"></div>
+        <div class="progress-container" id="progress-container">
+          <div class="progress-bar" id="progress-bar"></div>
         </div>
-      </div>
-      <!-- Progress bar -->
-      <div class="progress-container" id="progress-container">
-        <div class="progress-bar" id="progress-bar"></div>
-      </div>
-    </section>
+      </section>
 
-    <!-- Synthesize Button -->
-    <div class="synthesize-container">
-      <button id="synthesize-btn">
-        <span class="btn-text">SYNTHESIZE</span>
-      </button>
+      <!-- Post-synthesis actions (hidden until synthesis completes) -->
+      <div id="post-actions" class="hidden">
+        <button class="post-btn" data-action="regenerate" title="Same parameters, new question">&#8635; Regenerate</button>
+        <button class="post-btn" data-action="harder" title="Increase difficulty">&#8593; Harder</button>
+        <button class="post-btn" data-action="different" title="Same difficulty, swap vectors">&#8634; Different Angle</button>
+        <button class="post-btn" data-action="simplify" title="Decrease difficulty">&#8595; Simplify</button>
+      </div>
+
+      <!-- Evaluation panel (separate from output) -->
+      <section id="evaluation-panel" class="glass-panel">
+        <div class="panel-header">
+          <h2>Answer Evaluation</h2>
+          <span id="eval-status-tag" class="panel-tag">AWAITING SYNTHESIS</span>
+        </div>
+        <textarea id="answer-input" class="answer-textarea" placeholder="Synthesize a question first..." rows="6" disabled></textarea>
+        <div class="eval-actions">
+          <button id="grade-btn" class="action-btn grade-action" disabled>GRADE</button>
+        </div>
+        <div class="grade-result" id="grade-result"></div>
+      </section>
     </div>
-
   </main>
 
-  <!-- Chat Widget -->
+  <!-- Footer -->
+  <footer id="site-footer">
+    <p>&copy; 2026 Floyd Labs &mdash; Gordian-X Adversarial Synthesis Engine</p>
+  </footer>
+
+  <!-- History slide-out panel -->
+  <aside id="history-panel" class="slide-panel" aria-label="Question history">
+    <div class="slide-panel-header">
+      <h2>Question History</h2>
+      <div class="slide-panel-actions">
+        <button id="history-clear-all" class="action-btn">CLEAR ALL</button>
+        <button id="history-close" class="slide-panel-close" aria-label="Close">&times;</button>
+      </div>
+    </div>
+    <div id="history-list"></div>
+  </aside>
+
+  <!-- Suite generation dialog -->
+  <dialog id="suite-dialog">
+    <div class="dialog-content glass-panel">
+      <div class="dialog-header">
+        <h3>Generate Benchmark Suite</h3>
+        <button class="dialog-close" id="suite-close" aria-label="Close">&times;</button>
+      </div>
+      <div class="suite-config">
+        <div class="suite-field">
+          <label for="suite-count">Number of Questions</label>
+          <input type="number" id="suite-count" min="2" max="50" value="10">
+        </div>
+        <div class="suite-field">
+          <label for="suite-min-diff">Min Difficulty: <output id="suite-min-val">3</output></label>
+          <input type="range" id="suite-min-diff" min="1" max="10" value="3">
+        </div>
+        <div class="suite-field">
+          <label for="suite-max-diff">Max Difficulty: <output id="suite-max-val">8</output></label>
+          <input type="range" id="suite-max-diff" min="1" max="10" value="8">
+        </div>
+        <div class="suite-field">
+          <label class="toggle-row">
+            <input type="checkbox" id="suite-auto-vectors" checked>
+            <span>Auto-vary vectors across questions</span>
+          </label>
+        </div>
+      </div>
+      <div id="suite-progress" class="hidden">
+        <div class="progress-container active">
+          <div class="progress-bar" id="suite-progress-fill"></div>
+        </div>
+        <span id="suite-progress-text" class="suite-progress-label">0 / 10</span>
+      </div>
+      <div class="dialog-actions">
+        <button id="suite-generate-btn" class="action-btn grade-action">GENERATE SUITE</button>
+        <button id="suite-cancel-btn" class="action-btn">CANCEL</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Export dialog -->
+  <dialog id="export-dialog">
+    <div class="dialog-content glass-panel">
+      <div class="dialog-header">
+        <h3>Export Results</h3>
+        <button class="dialog-close" id="export-close" aria-label="Close">&times;</button>
+      </div>
+      <div class="export-options">
+        <button class="export-format-btn" data-format="json">
+          <span class="format-icon">{ }</span>
+          <span class="format-label">JSON</span>
+          <span class="format-desc">Structured data with metadata</span>
+        </button>
+        <button class="export-format-btn" data-format="markdown">
+          <span class="format-icon">MD</span>
+          <span class="format-label">Markdown</span>
+          <span class="format-desc">Documentation-ready format</span>
+        </button>
+        <button class="export-format-btn" data-format="csv">
+          <span class="format-icon">CSV</span>
+          <span class="format-label">CSV</span>
+          <span class="format-desc">Spreadsheet-compatible</span>
+        </button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Chat widget -->
   <aside id="chat-widget" aria-label="Engine Consultant chat">
     <div id="chat-resize-handle" aria-hidden="true"></div>
     <div class="chat-header" id="chat-header">
       <div class="chat-title">
         <span class="chat-dot"></span>
-        <span>ENGINE_CONSULTANT</span>
-        <span class="chat-version">v.2026.4</span>
+        <span>ENGINE CONSULTANT</span>
       </div>
       <button id="chat-minimize" aria-label="Minimize chat">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2">
@@ -263,15 +324,11 @@ benchmark requirements in natural language.
       <div class="chat-messages" id="chat-messages" role="log" aria-live="polite">
         <div class="msg system">
           <span class="msg-badge">SYS</span>
-          <span class="msg-text">Gordian-X Adversarial Synthesis Engine online.</span>
-        </div>
-        <div class="msg system">
-          <span class="msg-badge">SYS</span>
-          <span class="msg-text">Describe your benchmark requirements or use the control panels above.</span>
+          <span class="msg-text">Gordian-X online. Describe benchmarks or use: /harder /regenerate /different /suite N /export</span>
         </div>
       </div>
       <div class="chat-input-area">
-        <input type="text" id="chat-input" placeholder="Describe your benchmark scenario..." autocomplete="off">
+        <input type="text" id="chat-input" placeholder="Describe benchmark or use /commands..." autocomplete="off">
         <button id="chat-send" aria-label="Send message">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
             <path d="M1 1l14 7-14 7V9.5L10 8 1 6.5z"/>
@@ -281,7 +338,7 @@ benchmark requirements in natural language.
     </div>
   </aside>
 
-  <!-- Command Palette -->
+  <!-- Command palette -->
   <dialog id="command-palette">
     <div class="palette-content glass-panel">
       <div class="palette-search">
@@ -295,6 +352,9 @@ benchmark requirements in natural language.
       <ul class="palette-commands" id="palette-commands" role="listbox"></ul>
     </div>
   </dialog>
+
+  <!-- Scanline overlay (hidden by default, toggled in settings) -->
+  <div id="scanline-overlay" class="scanline-hidden" aria-hidden="true"></div>
 
   <script src="app.js"></script>
 </body>
