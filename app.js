@@ -115,20 +115,33 @@
     opencode_zen: {
       name: 'OpenCode Zen',
       url: 'https://opencode.ai/zen/v1/chat/completions',
-      placeholder: 'your-opencode-key',
+      placeholder: 'opencode-...',
       models: [
-        'opencode/claude-sonnet-4.6', 'opencode/claude-opus-4.6',
-        'opencode/gpt-5.4', 'opencode/gemini-3.1-pro',
-        'opencode/claude-haiku-4.5', 'opencode/qwen3-coder'
+        'big-pickle', 'nemotron-3-super-free', 'minimax-m2.5-free',
+        'qwen3.5-plus', 'qwen3.6-plus', 'kimi-k2.5',
+        'glm-5', 'glm-5.1', 'minimax-m2.5'
       ],
-      default: 'opencode/claude-sonnet-4.6'
+      default: 'big-pickle'
     },
     opencode_go: {
       name: 'OpenCode Go',
       url: 'https://opencode.ai/zen/go/v1/chat/completions',
-      placeholder: 'your-opencode-key',
-      models: ['opencode-go/glm-5', 'opencode-go/kimi-k2.5', 'opencode-go/minimax-m2.5'],
-      default: 'opencode-go/glm-5'
+      placeholder: 'opencode-...',
+      models: [
+        'big-pickle',
+        'qwen3.5-plus', 'qwen3.6-plus',
+        'kimi-k2.5', 'mimo-v2-pro', 'mimo-v2-omni',
+        'glm-5', 'glm-5.1'
+      ],
+      default: 'kimi-k2.5'
+    },
+    opencode_go_mini: {
+      name: 'OpenCode Go (MiniMax)',
+      url: 'https://opencode.ai/zen/go/v1/messages',
+      placeholder: 'opencode-...',
+      models: ['minimax-m2.7', 'minimax-m2.5'],
+      default: 'minimax-m2.7',
+      format: 'anthropic'
     },
     custom: {
       name: 'Custom Endpoint',
