@@ -143,6 +143,13 @@
       default: 'minimax-m2.7',
       format: 'anthropic'
     },
+    offline: {
+      name: 'Offline Engine',
+      url: '',
+      placeholder: 'No key required',
+      models: [],
+      default: ''
+    },
     custom: {
       name: 'Custom Endpoint',
       url: '',
@@ -1692,7 +1699,7 @@
       if (!state.cleanPrompt) return;
 
       if (!state.settings.apiKey) {
-        this.result.textContent = 'ERROR: API key required for grading. Open Settings to configure.';
+        this.result.textContent = 'ERROR: API key required for grading. Connect an API provider in Settings, or use Offline Engine for generation only.';
         return;
       }
 
@@ -2419,7 +2426,7 @@
       var currentDifficulty = state.params.cognitiveDepth;
       var currentParams = JSON.parse(JSON.stringify(state.params));
 
-      if (state.settings.apiKey) {
+      if (state.settings.apiKey && state.settings.provider !== 'offline') {
         var systemPrompt = buildPhase1SystemPrompt();
         var messages = [
           { role: 'system', content: systemPrompt },
@@ -2502,7 +2509,7 @@
       var currentDifficulty = state.params.cognitiveDepth;
       var currentParams = JSON.parse(JSON.stringify(state.params));
 
-      if (!state.settings.apiKey) {
+      if (!state.settings.apiKey || state.settings.provider === 'offline') {
         var offlineResult = OFFLINE_ENGINE.generate(currentDomains, currentParams);
         state.cleanPrompt = offlineResult;
         state.lastFullResponse = offlineResult;
@@ -2663,7 +2670,7 @@
 
       // Natural language: send to API
       if (!state.settings.apiKey) {
-        this.addMessage('error', 'API key not configured. Open Settings (gear icon) to select a provider and add your key.');
+        this.addMessage('error', 'API key not configured. Select a provider in Settings or choose Offline Engine.');
         return;
       }
 
