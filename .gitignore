@@ -16,3 +16,8 @@ GORDIAN-X-OVERHAUL-ANALYSIS.md
 # OS files
 .DS_Store
 Thumbs.db
+
+# Engine state (runtime data)
+engine_state/
+__pycache__/
+*.pyc
