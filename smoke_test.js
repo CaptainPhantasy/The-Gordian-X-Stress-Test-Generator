@@ -129,11 +129,11 @@ const server = http.createServer((req, res) => {
       return el ? el.textContent : '';
     });
 
-    assert(outputText.length > 100, `Output generated: ${outputText.length} chars`);
-    assert(outputText.includes('GORDIAN-X') || outputText.includes('Benchmark') || outputText.includes('SCENARIO'),
-           'Output contains benchmark structure');
-    assert(outputText.includes('Domain:') || outputText.includes('Technique:'),
-           'Output contains domain/technique metadata');
+    assert(outputText.length > 50, `Clean scenario generated: ${outputText.length} chars`);
+    assert(!/[╔╗╚╝║╠╣•⚠]/u.test(outputText),
+           'Output contains no box-drawing or metadata glyphs');
+    assert(!outputText.includes('GRADING CRITERIA') && !outputText.includes('RED FLAGS'),
+           'Phase 1 output contains no grading metadata');
 
     // Extract the scenario from DOM (state is IIFE-scoped)
     const cleanPrompt = outputText; // outputText IS the clean prompt

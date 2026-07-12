@@ -938,49 +938,10 @@
 
       _register(scenario);
 
-      // Build formatted output
-      var id = 'GX-' + Date.now().toString(36).toUpperCase();
-      var output = '╔══════════════════════════════════════════════════════════════╗\n';
-      output += '║  GORDIAN-X OFFLINE ENGINE :: BENCHMARK ' + id + '\n';
-      output += '╠══════════════════════════════════════════════════════════════╣\n';
-      output += '║  Domain:     ' + domain + '\n';
-      output += '║  Technique:  ' + tech.replace(/_/g, ' ') + '\n';
-      output += '║  Difficulty:  ' + difficulty.toUpperCase() + '\n';
-      output += '╠══════════════════════════════════════════════════════════════╣\n';
-      output += '║  SCENARIO:\n║\n';
-
-      // Word-wrap scenario at 58 chars
-      var words = scenario.split(' ');
-      var line = '║  ';
-      for (var wi = 0; wi < words.length; wi++) {
-        if (line.length + words[wi].length + 1 > 62) {
-          output += line + '\n';
-          line = '║  ' + words[wi];
-        } else {
-          line += (line === '║  ' ? '' : ' ') + words[wi];
-        }
-      }
-      if (line !== '║  ') output += line + '\n';
-
-      output += '║\n';
-      output += '╠══════════════════════════════════════════════════════════════╣\n';
-      output += '║  GRADING CRITERIA:\n';
-      if (dk.grading) {
-        dk.grading.forEach(function (g) {
-          output += '║    • ' + g + '\n';
-        });
-      }
-      output += '║\n';
-      output += '║  RED FLAGS:\n';
-      if (dk.redFlags) {
-        dk.redFlags.forEach(function (r) {
-          output += '║    ⚠ ' + r + '\n';
-        });
-      }
-      output += '╚══════════════════════════════════════════════════════════════╝\n';
-      output += '\n[Offline Engine v1.0 — connect API in Settings for LLM-powered synthesis]';
-
-      return output;
+      // Phase 1 must return only the clean scenario prompt. The former
+      // Unicode box/metadata report was displayed as the prompt itself and
+      // made the browser output look garbled while also leaking grading data.
+      return scenario.trim();
     }
 
     // ── Persistence (localStorage) ──────────────────────────────
@@ -1487,7 +1448,7 @@
     clear: function () {
       var pre = this.output ? this.output.querySelector('.output-text') : null;
       if (pre) {
-        pre.innerHTML = 'Gordian-X Adversarial Synthesis Engine v2026.4\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nSelect attack vectors and a domain, then\npress SYNTHESIZE to generate a benchmark.\n\nConfigure your API key in Settings first.\n\n&gt; Awaiting directives...';
+        pre.textContent = 'Gordian-X Adversarial Synthesis Engine v2026.4\n--------------------------------------------\n\nSelect attack vectors and a domain, then\npress SYNTHESIZE to generate a benchmark.\n\nConfigure your API key in Settings first.\n\n> Awaiting directives...';
       }
       state.lastFullResponse = '';
       state.cleanPrompt = '';
