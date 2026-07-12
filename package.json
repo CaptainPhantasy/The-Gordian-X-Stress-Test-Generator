@@ -1,0 +1,24 @@
+{
+  "name": "gordy",
+  "version": "1.0.0",
+  "description": "---",
+  "main": "app.js",
+  "scripts": {
+    "smoke": "node smoke_test.js",
+    "test": "node smoke_test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CaptainPhantasy/The-Gordian-X-Stress-Test-Generator.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CaptainPhantasy/The-Gordian-X-Stress-Test-Generator/issues"
+  },
+  "homepage": "https://github.com/CaptainPhantasy/The-Gordian-X-Stress-Test-Generator#readme",
+  "devDependencies": {
+    "playwright": "^1.61.1"
+  }
+}

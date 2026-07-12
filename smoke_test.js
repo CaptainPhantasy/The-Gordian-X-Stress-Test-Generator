@@ -9,10 +9,12 @@ const path = require('path');
 
 const PORT = 9876;
 const ROOT = path.resolve(__dirname);
+const SYSTEM_CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 
 // Minimal static file server
 const server = http.createServer((req, res) => {
-  const file = req.url === '/' ? '/index.html' : req.url;
+  const pathname = new URL(req.url, 'http://localhost').pathname;
+  const file = pathname === '/' ? '/index.html' : pathname;
   const filePath = path.join(ROOT, file);
   const ext = path.extname(filePath).slice(1);
   const types = { html: 'text/html', js: 'application/javascript', css: 'text/css', png: 'image/png' };
@@ -36,7 +38,11 @@ const server = http.createServer((req, res) => {
   await new Promise(r => server.listen(PORT, r));
   console.log(`\n📡 Server on http://localhost:${PORT}`);
 
-  const browser = await chromium.launch({ headless: true });
+  const launchOptions = { headless: true };
+  if (fs.existsSync(SYSTEM_CHROME)) {
+    launchOptions.executablePath = SYSTEM_CHROME;
+  }
+  const browser = await chromium.launch(launchOptions);
   const page = await browser.newPage();
   page.on('console', msg => {
     if (msg.type() === 'error') console.log(`    [BROWSER ERROR] ${msg.text()}`);
@@ -130,7 +136,7 @@ const server = http.createServer((req, res) => {
     });
 
     assert(outputText.length > 50, `Clean scenario generated: ${outputText.length} chars`);
-    assert(!/[╔╗╚╝║╠╣•⚠]/u.test(outputText),
+    assert(!/[╔╗╚╝║╠╣━─•⚠]/u.test(outputText),
            'Output contains no box-drawing or metadata glyphs');
     assert(!outputText.includes('GRADING CRITERIA') && !outputText.includes('RED FLAGS'),
            'Phase 1 output contains no grading metadata');

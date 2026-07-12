@@ -17,6 +17,9 @@ GORDIAN-X-OVERHAUL-ANALYSIS.md
 .DS_Store
 Thumbs.db
 
+# Node dependencies
+node_modules/
+
 # Engine state (runtime data)
 engine_state/
 __pycache__/
