@@ -2181,6 +2181,14 @@
       if (state.settings.provider === 'custom') {
         return state.settings.customUrl || '';
       }
+      // When served from http(s), route through local proxy to bypass CORS.
+      // server.py exposes /proxy/<providerKey>. For file:// we still hit upstream
+      // directly (no proxy available), and many providers will CORS-fail there.
+      var isHttp = location.protocol === 'http:' || location.protocol === 'https:';
+      var proxyable = p && p.url && state.settings.provider !== 'offline';
+      if (isHttp && proxyable) {
+        return new URL('proxy/' + state.settings.provider, location.href).href;
+      }
       return p.url;
     },
 
@@ -2297,6 +2305,75 @@
         onDone();
       } catch (e) {
         onError('Network error: ' + e.message);
+      }
+    },
+
+    // Validate the configured API key by making a minimal live call.
+    // Returns { ok: boolean, message: string }.
+    testKey: async function () {
+      if (state.settings.provider === 'offline') {
+        return { ok: true, message: 'Offline engine — no key required.' };
+      }
+      if (!state.settings.apiKey) {
+        return { ok: false, message: 'No API key entered.' };
+      }
+      var endpoint = this.getEndpoint();
+      if (!endpoint) {
+        return { ok: false, message: 'No endpoint configured for this provider.' };
+      }
+      var provider = this.getProvider();
+      var model = state.settings.model || provider.default || '';
+      try {
+        var response;
+        if (provider.format === 'anthropic') {
+          response = await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-api-key': state.settings.apiKey,
+              'anthropic-version': '2023-06-01',
+              'anthropic-dangerous-direct-browser-access': 'true'
+            },
+            body: JSON.stringify({
+              model: model,
+              max_tokens: 1,
+              messages: [{ role: 'user', content: 'ping' }]
+            })
+          });
+        } else {
+          var headers = {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + state.settings.apiKey
+          };
+          if (state.settings.provider === 'openrouter') {
+            headers['HTTP-Referer'] = location.origin;
+            headers['X-Title'] = 'Gordian-X Adversarial Synthesis Engine';
+          }
+          response = await fetch(endpoint, {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify({
+              model: model,
+              messages: [{ role: 'user', content: 'ping' }],
+              max_tokens: 1,
+              stream: false
+            })
+          });
+        }
+
+        if (response.ok) {
+          return { ok: true, message: 'Key valid — ' + provider.name + ' responded (HTTP ' + response.status + ').' };
+        }
+        var errBody = await response.json().catch(function () { return {}; });
+        var errMsg = (errBody.error && (errBody.error.message || errBody.error)) || errBody.message || response.statusText;
+        if (typeof errMsg === 'object') { try { errMsg = JSON.stringify(errMsg); } catch (e) { errMsg = String(errMsg); } }
+        if (response.status === 401 || response.status === 403) {
+          return { ok: false, message: 'Key rejected (HTTP ' + response.status + '): ' + errMsg };
+        }
+        // Non-auth error: key auth itself may be fine; surface the error verbatim.
+        return { ok: false, message: 'HTTP ' + response.status + ': ' + errMsg };
+      } catch (e) {
+        return { ok: false, message: 'Network error: ' + e.message };
       }
     },
 
@@ -2808,6 +2885,28 @@
       document.getElementById('api-key-toggle').addEventListener('click', function () {
         apiInput.type = apiInput.type === 'password' ? 'text' : 'password';
       });
+
+      // Test Key button
+      var testBtn = document.getElementById('test-key-btn');
+      var testResult = document.getElementById('test-key-result');
+      if (testBtn && testResult) {
+        testBtn.addEventListener('click', async function () {
+          testBtn.disabled = true;
+          testResult.className = 'test-key-result info';
+          testResult.textContent = 'Testing ' + (PROVIDERS[state.settings.provider] ? PROVIDERS[state.settings.provider].name : state.settings.provider) + '...';
+          try {
+            var res = await API.testKey();
+            testResult.className = 'test-key-result ' + (res.ok ? 'ok' : 'err');
+            testResult.textContent = (res.ok ? '✓ ' : '✗ ') + res.message;
+            self.updateStatus(res.ok);
+          } catch (e) {
+            testResult.className = 'test-key-result err';
+            testResult.textContent = '✗ ' + (e && e.message ? e.message : 'Unknown error');
+          } finally {
+            testBtn.disabled = false;
+          }
+        });
+      }
 
       // Model select
       modelSelect.addEventListener('change', function () {

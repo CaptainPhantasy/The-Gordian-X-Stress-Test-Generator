@@ -39,6 +39,7 @@
           <option value="xai">xAI (Grok)</option>
           <option value="opencode_zen">OpenCode Zen</option>
           <option value="opencode_go">OpenCode Go</option>
+          <option value="opencode_go_mini">OpenCode Go (MiniMax)</option>
           <option value="offline">Offline Engine</option>
           <option value="custom">Custom Endpoint</option>
         </select>
@@ -61,6 +62,8 @@
           <span class="status-dot offline"></span>
           <span class="status-text">Not configured</span>
         </div>
+        <button type="button" id="test-key-btn" class="test-key-btn">Test Key</button>
+        <div id="test-key-result" class="test-key-result" role="status" aria-live="polite"></div>
       </div>
       <div class="setting-group">
         <label for="model-select">Model</label>

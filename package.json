@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "smoke": "node smoke_test.js",
-    "test": "node smoke_test.js"
+    "test:server": "python3 -m unittest -v test_server.py",
+    "test": "node smoke_test.js && npm run test:server"
   },
   "repository": {
     "type": "git",

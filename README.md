@@ -25,16 +25,17 @@ Version 2.0 went from "proof of concept with five tricks" to "enterprise-grade c
 ## Quick Start
 
 ```
-1. Open index.html in any browser
-2. Click the gear icon -- pick a provider, paste an API key
-3. Select attack vectors and a domain in the sidebar
-4. Click SYNTHESIZE
-5. Copy the prompt, paste it into the LLM you're testing
-6. Paste the response back, click GRADE
-7. Watch it fail
+1. Run `./start.sh` (or `./start.sh --no-open` for headless use)
+2. Open `http://localhost:10777/`
+3. Click the gear icon -- pick a provider, paste an API key
+4. Use **Test Key** to verify the selected provider
+5. Select attack vectors and a domain in the sidebar
+6. Click SYNTHESIZE
+7. Copy the prompt, paste it into the LLM you're testing
+8. Paste the response back, click GRADE
 ```
 
-No build tools. No `npm install`. No frameworks. No dependencies. Four files. Open the HTML. That's it.
+The application itself has no build step. Python's standard library serves the reviewed static assets and a loopback-only provider proxy. Node/Playwright is used only by the smoke-test suite.
 
 ## The Arsenal
 
@@ -136,6 +137,7 @@ Together AI       Llama, Mixtral open-weight        tok_...
 xAI               Grok 3, Grok 2                   xai-...
 OpenCode Zen      Curated frontier models           your-opencode-key
 OpenCode Go       Budget-friendly models            your-opencode-key
+OpenCode Go Mini  MiniMax Messages API               your-opencode-key
 Custom            Your URL, your key, your problem  anything
 ```
 
@@ -154,10 +156,13 @@ The command palette has everything: synthesize, toggle vectors, export, history,
 ## Tech Stack
 
 ```
-index.html   361 lines    Structure. Semantic HTML5.
-app.js       2,355 lines  Logic. Pure JS. Zero dependencies. IIFE module.
-style.css    2,418 lines  Visual. CSS custom properties. WCAG AA compliant.
-gordiux.png  ---           Hero image. Psychedelic. Bowser approved.
+index.html    Structure. Semantic HTML5.
+app.js        Logic. Pure JS. Zero runtime dependencies. IIFE module.
+style.css     Visual. CSS custom properties. WCAG AA compliant.
+server.py     Loopback static server and fixed-allowlist provider proxy.
+start.sh      Safe launcher that refuses to terminate untracked processes.
+stop.sh       Graceful shutdown for the tracked Gordian-X server only.
+gordiux.png   Hero image. Psychedelic. Bowser approved.
 ```
 
 5,134 lines total. No build step. No bundler. No transpiler. No node_modules black hole.
@@ -183,7 +188,7 @@ No IE. No polyfills. It's 2026.
 
 ## API Key Security
 
-Your API key is stored in `localStorage` only. It never leaves your browser except in direct API calls to your chosen provider. No telemetry. No analytics. No server. No database. The entire application runs client-side.
+Your API key is stored in browser `localStorage`. When the app is launched through `server.py`, requests pass through a loopback-only proxy with a fixed provider allowlist; keys are never written by the server or logged. The proxy rejects cross-origin callers, oversized bodies, unknown providers, and unreviewed static paths. No telemetry, analytics, or database is used.
 
 See [SECURITY.md](SECURITY.md) for the full security policy.
 
