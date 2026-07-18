@@ -2,19 +2,21 @@
 
 ## Scope
 
-Gordian-X is a client-side web application. It runs entirely in the browser. There is no server, no database, no backend, and no telemetry.
+Gordian-X is a client-side web application served by a local, loopback-only Python process. The local process serves an explicit static-file allowlist and proxies requests only to known provider endpoints. There is no remote Gordian-X backend, database, or telemetry.
 
 ## API Key Handling
 
 ### Storage
 - API keys are stored in the browser's `localStorage` under the key `gordianx-api-key`
-- Keys never leave the browser except in direct HTTPS requests to the user's chosen API provider
+- Keys are sent either directly to the chosen provider (when opened as `file://`) or through the loopback proxy to that provider
 - No key is transmitted to Floyd Labs or any third party
 
 ### Transmission
 - Keys are sent only to the API endpoint the user explicitly selects (OpenAI, Anthropic, Google, etc.)
 - All API calls use HTTPS
 - OpenRouter requests include `HTTP-Referer` and `X-Title` headers per their API requirements
+- The local proxy binds to `127.0.0.1`, rejects non-local browser origins, limits request bodies, and uses a fixed upstream allowlist
+- The local server never persists or logs authorization headers or request bodies
 
 ### Clearing
 - Users can clear their API key by deleting it from the Settings panel
@@ -27,7 +29,7 @@ All user data is stored exclusively in `localStorage`:
 
 | Key | Contents |
 |-----|----------|
-| `gordianx-api-key` | API key (encrypted by browser) |
+| `gordianx-api-key` | API key (browser-managed local storage; not application-encrypted) |
 | `gordianx-provider` | Selected provider name |
 | `gordianx-model` | Selected model name |
 | `gordianx-temperature` | Temperature setting |
@@ -66,6 +68,8 @@ The chat interface and answer evaluation textarea accept user input. This input 
 The application makes network requests only to:
 1. Google Fonts (font loading, on page load)
 2. The user's selected API provider (when synthesizing or grading)
+
+The local proxy cannot be used for arbitrary destinations. Static serving is restricted to `index.html`, `app.js`, `style.css`, and `gordiux.png`; repository metadata and local planning files are not web-accessible.
 
 No analytics. No tracking pixels. No CDN-loaded scripts. No beacon requests.
 

@@ -44,6 +44,13 @@ const server = http.createServer((req, res) => {
   }
   const browser = await chromium.launch(launchOptions);
   const page = await browser.newPage();
+  // Keep the smoke test deterministic and independent of Google Fonts.
+  await page.route('https://fonts.googleapis.com/**', route =>
+    route.fulfill({ status: 200, contentType: 'text/css', body: '' })
+  );
+  await page.route('https://fonts.gstatic.com/**', route =>
+    route.fulfill({ status: 204, body: '' })
+  );
   page.on('console', msg => {
     if (msg.type() === 'error') console.log(`    [BROWSER ERROR] ${msg.text()}`);
   });
@@ -51,7 +58,8 @@ const server = http.createServer((req, res) => {
   try {
     // ─── STEP 1: Load page ──────────────────────────────────
     console.log('\n═══ STEP 1: Load Page ═══');
-    await page.goto(`http://localhost:${PORT}/`, { waitUntil: 'networkidle', timeout: 15000 });
+    await page.goto(`http://localhost:${PORT}/`, { waitUntil: 'domcontentloaded', timeout: 15000 });
+    await page.waitForSelector('#synthesize-btn', { timeout: 15000 });
     const title = await page.title();
     assert(title.includes('Gordian-X'), `Page title: "${title}"`);
 
@@ -77,6 +85,17 @@ const server = http.createServer((req, res) => {
       await page.waitForTimeout(500);
       console.log('    Dismissed onboarding overlay');
     }
+
+    // Verify the recovered key-test control without contacting a provider.
+    await page.click('#settings-btn');
+    await page.selectOption('#provider-select', 'offline');
+    await page.click('#test-key-btn');
+    const keyTestResult = await page.textContent('#test-key-result');
+    assert(
+      keyTestResult.includes('Offline engine') && keyTestResult.includes('no key required'),
+      'Test Key reports the offline provider without a network request'
+    );
+    await page.click('#settings-close');
 
     // ─── STEP 2: Generate (no API key → offline engine) ──────
     console.log('\n═══ STEP 2: Generate Benchmark (Offline) ═══');

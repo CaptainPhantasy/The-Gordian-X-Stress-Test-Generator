@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "gates": [
+    {
+      "name": "gordy-recovery-checks",
+      "command": [
+        "sh",
+        "-c",
+        "npm ci && python3 -m py_compile server.py test_server.py && ruff check server.py test_server.py && shellcheck start.sh stop.sh && npm test && npm audit --audit-level=high"
+      ],
+      "required": true
+    }
+  ],
+  "include": [
+    ".proofline.json",
+    "README.md",
+    "SECURITY.md",
+    "app.js",
+    "index.html",
+    "package.json",
+    "smoke_test.js",
+    "style.css",
+    "server.py",
+    "start.sh",
+    "stop.sh",
+    "test_server.py"
+  ],
+  "deny": [
+    ".env",
+    ".env.*",
+    "*.pem",
+    "*.key",
+    "node_modules/**",
+    ".git/**",
+    ".harness/**",
+    ".pi/**",
+    ".omp/**",
+    ".supercache/**"
+  ],
+  "baseBranch": "main",
+  "publish": true,
+  "allowLocalRemote": false
+}
